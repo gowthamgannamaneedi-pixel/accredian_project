@@ -11,31 +11,27 @@ import { motion } from 'framer-motion';
 interface CompanyConfig {
   name: string;
   type: 'icon' | 'text';
-  // For type='icon': Simple Icons slug + color
   iconSlug?: string;
-  iconColor?: string;
-  // For type='text': display string + brand color
   textColor?: string;
   bg?: string;
 }
 
 const COMPANIES: CompanyConfig[] = [
-  { name: 'Google',        type: 'icon', iconSlug: 'google',      iconColor: '4285F4' },
-  { name: 'Microsoft',     type: 'icon', iconSlug: 'microsoft',   iconColor: '00A4EF' },
-  { name: 'Amazon',        type: 'icon', iconSlug: 'amazon',      iconColor: 'FF9900' },
-  { name: 'Meta',          type: 'icon', iconSlug: 'meta',        iconColor: '0668E1' },
-  { name: 'Apple',         type: 'icon', iconSlug: 'apple',       iconColor: '555555' },
-  { name: 'IBM',           type: 'icon', iconSlug: 'ibm',         iconColor: '1F70C1' },
-  { name: 'Oracle',        type: 'icon', iconSlug: 'oracle',      iconColor: 'F80000' },
-  { name: 'Samsung',       type: 'icon', iconSlug: 'samsung',     iconColor: '1428A0' },
-  { name: 'Netflix',       type: 'icon', iconSlug: 'netflix',     iconColor: 'E50914' },
-  { name: 'Adobe',         type: 'icon', iconSlug: 'adobe',       iconColor: 'FF0000' },
-  { name: 'Wipro',         type: 'icon', iconSlug: 'wipro',       iconColor: '341571' },
-  { name: 'Infosys',       type: 'icon', iconSlug: 'infosys',     iconColor: '007CC3' },
-  { name: 'Capgemini',     type: 'icon', iconSlug: 'capgemini',   iconColor: '003B8E' },
-  { name: 'Accenture',     type: 'icon', iconSlug: 'accenture',   iconColor: 'A100FF' },
-  { name: 'Deloitte',      type: 'icon', iconSlug: 'deloitte',    iconColor: '86BC25' },
-  // Text badges for companies not in Simple Icons
+  { name: 'Google',        type: 'icon', iconSlug: 'google' },
+  { name: 'Microsoft',     type: 'icon', iconSlug: 'microsoft' },
+  { name: 'Amazon',        type: 'icon', iconSlug: 'amazon' },
+  { name: 'Meta',          type: 'icon', iconSlug: 'meta' },
+  { name: 'Apple',         type: 'icon', iconSlug: 'apple' },
+  { name: 'IBM',           type: 'icon', iconSlug: 'ibm' },
+  { name: 'Oracle',        type: 'icon', iconSlug: 'oracle' },
+  { name: 'Samsung',       type: 'icon', iconSlug: 'samsung' },
+  { name: 'Netflix',       type: 'icon', iconSlug: 'netflix' },
+  { name: 'Adobe',         type: 'icon', iconSlug: 'adobe' },
+  { name: 'Wipro',         type: 'icon', iconSlug: 'wipro' },
+  { name: 'Infosys',       type: 'icon', iconSlug: 'infosys' },
+  { name: 'Capgemini',     type: 'icon', iconSlug: 'capgemini' },
+  { name: 'Accenture',     type: 'icon', iconSlug: 'accenture' },
+  { name: 'Deloitte',      type: 'icon', iconSlug: 'deloitte' },
   { name: 'TCS',           type: 'text', textColor: '#003087', bg: '#EEF4FF' },
   { name: 'HCL Tech',      type: 'text', textColor: '#0076C0', bg: '#EEF6FF' },
   { name: 'Cognizant',     type: 'text', textColor: '#1263A3', bg: '#EEF4FF' },
@@ -45,28 +41,27 @@ const COMPANIES: CompanyConfig[] = [
 
 function CompanyLogo({ company }: { company: CompanyConfig }) {
   if (company.type === 'icon' && company.iconSlug) {
+    // Use Simple Icons CDN without color param — returns icon in brand's official color
+    const src = `https://cdn.simpleicons.org/${company.iconSlug}`;
     return (
-      <div className="flex flex-col items-center gap-1.5">
+      <div className="flex flex-col items-center gap-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`https://cdn.simpleicons.org/${company.iconSlug}/${company.iconColor}`}
+          src={src}
           alt={`${company.name} logo`}
-          width={28}
-          height={28}
+          width={32}
+          height={32}
           className="object-contain"
-          style={{ width: '28px', height: '28px' }}
+          style={{ width: '32px', height: '32px' }}
         />
-        <span
-          className="text-[10px] font-bold tracking-wide"
-          style={{ color: `#${company.iconColor}` }}
-        >
+        <span className="text-[10px] font-bold text-slate-600 tracking-wide">
           {company.name}
         </span>
       </div>
     );
   }
 
-  // Text badge fallback
+  // Text badge for companies not in Simple Icons
   return (
     <span
       className="px-3 py-1.5 rounded-lg text-xs font-extrabold tracking-wide border"
@@ -80,6 +75,7 @@ function CompanyLogo({ company }: { company: CompanyConfig }) {
     </span>
   );
 }
+
 
 const academicPartners = [
   { name: 'E&ICT Academy, IIT Guwahati', logoText: 'E&ICT Academy, IIT Guwahati' },
