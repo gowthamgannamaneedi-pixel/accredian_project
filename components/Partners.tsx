@@ -1,65 +1,83 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Landmark, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Clearbit Logo API — industry-standard, highly reliable logo CDN
-// Falls back to branded text if image fails to load
-const COMPANIES: { name: string; domain: string; textColor: string; textStyle?: string }[] = [
-  { name: 'Google',       domain: 'google.com',       textColor: '#4285F4' },
-  { name: 'Microsoft',    domain: 'microsoft.com',    textColor: '#00A4EF' },
-  { name: 'Amazon',       domain: 'amazon.com',       textColor: '#FF9900' },
-  { name: 'Meta',         domain: 'meta.com',         textColor: '#0668E1' },
-  { name: 'IBM',          domain: 'ibm.com',          textColor: '#1F70C1' },
-  { name: 'Accenture',    domain: 'accenture.com',    textColor: '#A100FF' },
-  { name: 'TCS',          domain: 'tcs.com',          textColor: '#003087' },
-  { name: 'Wipro',        domain: 'wipro.com',        textColor: '#341571' },
-  { name: 'Infosys',      domain: 'infosys.com',      textColor: '#007CC3' },
-  { name: 'Oracle',       domain: 'oracle.com',       textColor: '#F80000' },
-  { name: 'Deloitte',     domain: 'deloitte.com',     textColor: '#86BC25', textStyle: 'font-bold text-slate-800 text-sm' },
-  { name: 'Samsung',      domain: 'samsung.com',      textColor: '#1428A0' },
-  { name: 'Apple',        domain: 'apple.com',        textColor: '#555555' },
-  { name: 'Netflix',      domain: 'netflix.com',      textColor: '#E50914' },
-  { name: 'Adobe',        domain: 'adobe.com',        textColor: '#FF0000' },
-  { name: 'Cognizant',    domain: 'cognizant.com',    textColor: '#1263A3' },
-  { name: 'Capgemini',    domain: 'capgemini.com',    textColor: '#003B8E' },
-  { name: 'HCL',          domain: 'hcltech.com',      textColor: '#0076C0' },
-  { name: 'JPMorgan',     domain: 'jpmorganchase.com',textColor: '#003087' },
-  { name: 'Goldman Sachs',domain: 'goldmansachs.com', textColor: '#6495C8' },
+// Simple Icons CDN — free, reliable, official brand SVGs
+// Format: https://cdn.simpleicons.org/{slug}/{hex-color}
+// Text badge fallback for companies not in Simple Icons
+
+interface CompanyConfig {
+  name: string;
+  type: 'icon' | 'text';
+  // For type='icon': Simple Icons slug + color
+  iconSlug?: string;
+  iconColor?: string;
+  // For type='text': display string + brand color
+  textColor?: string;
+  bg?: string;
+}
+
+const COMPANIES: CompanyConfig[] = [
+  { name: 'Google',        type: 'icon', iconSlug: 'google',      iconColor: '4285F4' },
+  { name: 'Microsoft',     type: 'icon', iconSlug: 'microsoft',   iconColor: '00A4EF' },
+  { name: 'Amazon',        type: 'icon', iconSlug: 'amazon',      iconColor: 'FF9900' },
+  { name: 'Meta',          type: 'icon', iconSlug: 'meta',        iconColor: '0668E1' },
+  { name: 'Apple',         type: 'icon', iconSlug: 'apple',       iconColor: '555555' },
+  { name: 'IBM',           type: 'icon', iconSlug: 'ibm',         iconColor: '1F70C1' },
+  { name: 'Oracle',        type: 'icon', iconSlug: 'oracle',      iconColor: 'F80000' },
+  { name: 'Samsung',       type: 'icon', iconSlug: 'samsung',     iconColor: '1428A0' },
+  { name: 'Netflix',       type: 'icon', iconSlug: 'netflix',     iconColor: 'E50914' },
+  { name: 'Adobe',         type: 'icon', iconSlug: 'adobe',       iconColor: 'FF0000' },
+  { name: 'Wipro',         type: 'icon', iconSlug: 'wipro',       iconColor: '341571' },
+  { name: 'Infosys',       type: 'icon', iconSlug: 'infosys',     iconColor: '007CC3' },
+  { name: 'Capgemini',     type: 'icon', iconSlug: 'capgemini',   iconColor: '003B8E' },
+  { name: 'Accenture',     type: 'icon', iconSlug: 'accenture',   iconColor: 'A100FF' },
+  { name: 'Deloitte',      type: 'icon', iconSlug: 'deloitte',    iconColor: '86BC25' },
+  // Text badges for companies not in Simple Icons
+  { name: 'TCS',           type: 'text', textColor: '#003087', bg: '#EEF4FF' },
+  { name: 'HCL Tech',      type: 'text', textColor: '#0076C0', bg: '#EEF6FF' },
+  { name: 'Cognizant',     type: 'text', textColor: '#1263A3', bg: '#EEF4FF' },
+  { name: 'JPMorgan',      type: 'text', textColor: '#003087', bg: '#EEF4FF' },
+  { name: 'Goldman Sachs', type: 'text', textColor: '#6495C8', bg: '#F0F4FA' },
 ];
 
-
-function CompanyLogo({ name, domain, textColor, textStyle }: {
-  name: string;
-  domain: string;
-  textColor: string;
-  textStyle?: string;
-}) {
-  const [failed, setFailed] = useState(false);
-
-  if (failed) {
+function CompanyLogo({ company }: { company: CompanyConfig }) {
+  if (company.type === 'icon' && company.iconSlug) {
     return (
-      <span
-        className={textStyle ?? 'font-bold text-sm tracking-tight'}
-        style={{ color: textColor }}
-      >
-        {name}
-      </span>
+      <div className="flex flex-col items-center gap-1.5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://cdn.simpleicons.org/${company.iconSlug}/${company.iconColor}`}
+          alt={`${company.name} logo`}
+          width={28}
+          height={28}
+          className="object-contain"
+          style={{ width: '28px', height: '28px' }}
+        />
+        <span
+          className="text-[10px] font-bold tracking-wide"
+          style={{ color: `#${company.iconColor}` }}
+        >
+          {company.name}
+        </span>
+      </div>
     );
   }
 
+  // Text badge fallback
   return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img
-      src={`https://logo.clearbit.com/${domain}`}
-      alt={`${name} logo`}
-      width={96}
-      height={32}
-      className="object-contain"
-      style={{ maxHeight: '32px', width: 'auto', maxWidth: '100px' }}
-      onError={() => setFailed(true)}
-    />
+    <span
+      className="px-3 py-1.5 rounded-lg text-xs font-extrabold tracking-wide border"
+      style={{
+        color: company.textColor,
+        background: company.bg ?? '#F8FAFC',
+        borderColor: `${company.textColor}33`,
+      }}
+    >
+      {company.name}
+    </span>
   );
 }
 
@@ -136,20 +154,15 @@ export default function Partners() {
         </div>
 
         {/* Corporate Partners Logo Marquee */}
-        <div className="relative overflow-hidden py-5 border-y border-slate-200 bg-[#F8FAFC] rounded-2xl">
-          <div className="flex animate-marquee gap-6 items-center">
+        <div className="relative overflow-hidden py-6 border-y border-slate-200 bg-[#F8FAFC] rounded-2xl">
+          <div className="flex animate-marquee gap-5 items-center">
             {marqueeItems.map((company, index) => (
               <div
                 key={`${company.name}-${index}`}
-                className="flex items-center justify-center px-8 py-4 rounded-xl bg-white border border-slate-200 shrink-0 hover:border-[#168CFF]/50 hover:shadow-md transition-all duration-300"
-                style={{ minWidth: '150px', height: '72px' }}
+                className="flex items-center justify-center px-6 py-4 rounded-xl bg-white border border-slate-200 shrink-0 hover:border-[#168CFF]/50 hover:shadow-md transition-all duration-300"
+                style={{ minWidth: '130px', height: '76px' }}
               >
-                <CompanyLogo
-                  name={company.name}
-                  domain={company.domain}
-                  textColor={company.textColor}
-                  textStyle={company.textStyle}
-                />
+                <CompanyLogo company={company} />
               </div>
             ))}
           </div>
