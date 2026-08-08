@@ -12,7 +12,7 @@ const iconMap: Record<string, React.ElementType> = {
   GraduationCap,
 };
 
-function Counter({
+function StatCounter({
   targetNumber,
   suffix,
   displayValue
@@ -22,40 +22,14 @@ function Counter({
   displayValue: string;
 }) {
   const [count, setCount] = useState<number>(0);
-  const [hasStarted, setHasStarted] = useState(false);
-  const elementRef = useRef<HTMLSpanElement>(null);
+  const [isClient, setIsClient] = useState<boolean>(false);
+  const spanRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setHasStarted(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
-    }
-
-    // Safety fallback ensures animation runs reliably even on static hydration
-    const fallbackTimer = setTimeout(() => {
-      setHasStarted(true);
-    }, 150);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallbackTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!hasStarted) return;
-
+    setIsClient(true);
     let startTimestamp: number | null = null;
-    let animationFrameId: number;
-    const duration = 1800; // 1.8 seconds smooth count up animation
+    let animId: number;
+    const duration = 1800; // 1.8s smooth count up animation
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -66,29 +40,55 @@ function Counter({
       setCount(Math.floor(easeOutCubic * targetNumber));
 
       if (progress < 1) {
-        animationFrameId = requestAnimationFrame(step);
+        animId = requestAnimationFrame(step);
       } else {
         setCount(targetNumber);
       }
     };
 
-    animationFrameId = requestAnimationFrame(step);
+    // Trigger animation when element enters viewport OR after brief mount delay
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          animId = requestAnimationFrame(step);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (spanRef.current) {
+      observer.observe(spanRef.current);
+    }
+
+    // Safety fallback: start animation after 100ms if observer is delayed
+    const timer = setTimeout(() => {
+      if (!startTimestamp) {
+        animId = requestAnimationFrame(step);
+      }
+    }, 100);
 
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      clearTimeout(timer);
+      if (animId) {
+        cancelAnimationFrame(animId);
       }
     };
-  }, [hasStarted, targetNumber]);
+  }, [targetNumber]);
 
   // Format count string output
   const formattedCount = displayValue.includes('K')
     ? `${count}K`
     : count.toLocaleString();
 
+  // If SSR (server-rendered HTML), output displayValue directly so static HTML shows 10K+, 200+, 94%, 500+
+  // On client, output animated formattedCount!
+  const renderedText = isClient ? formattedCount : displayValue;
+
   return (
-    <span ref={elementRef} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
-      {hasStarted ? formattedCount : '0'}
+    <span ref={spanRef} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
+      {renderedText}
       <span className="text-[#168CFF] font-bold">{suffix}</span>
     </span>
   );
@@ -111,8 +111,9 @@ export default function Stats() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {STATS_DATA.map((stat, idx) => {
             const Icon = iconMap[stat.iconName] || Users;
-            const targetNum = stat.targetNumber || stat.value;
-            const dispVal = stat.displayValue || stat.value.toString();
+            const targetNum = stat.targetNumber ?? stat.value ?? 0;
+            const dispVal = stat.displayValue ?? stat.value?.toString() ?? '0';
+            const suff = stat.suffix ?? '+';
 
             return (
               <motion.div
@@ -127,7 +128,7 @@ export default function Stats() {
                   <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-[#0284C7] mb-4 group-hover:scale-105 transition-transform duration-300">
                     <Icon className="w-6 h-6" aria-hidden="true" />
                   </div>
-                  <Counter targetNumber={targetNum} displayValue={dispVal} suffix={stat.suffix} />
+                  <StatCounter targetNumber={targetNum} displayValue={dispVal} suffix={suff} />
                   <h3 className="text-base font-bold text-[#111827] mt-2 mb-1">
                     {stat.label}
                   </h3>
