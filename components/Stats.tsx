@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { STATS_DATA } from '@/lib/data';
 import { Users, Building2, Award, GraduationCap } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const iconMap: Record<string, React.ElementType> = {
   Users,
@@ -15,39 +15,38 @@ const iconMap: Record<string, React.ElementType> = {
 function Counter({ value, suffix }: { value: number; suffix: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
-  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    // If already animated or in view, run count up animation
-    if (!hasAnimated.current && (isInView || typeof window !== 'undefined')) {
-      hasAnimated.current = true;
-      let start = 0;
-      const duration = 1800;
-      const stepTime = 30;
-      const steps = duration / stepTime;
-      const increment = value / steps;
+    let startTimestamp: number | null = null;
+    let animationFrameId: number;
+    const duration = 2000; // 2 seconds smooth animation
 
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= value) {
-          setCount(value);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(start));
-        }
-      }, stepTime);
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
 
-      return () => clearInterval(timer);
-    }
-  }, [isInView, value]);
+      // Smooth ease-out cubic curve
+      const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(easeOutCubic * value));
 
-  // Fallback safety to ensure non-zero display
-  useEffect(() => {
-    const safetyTimer = setTimeout(() => {
-      setCount(value);
-    }, 2000);
-    return () => clearTimeout(safetyTimer);
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      } else {
+        setCount(value);
+      }
+    };
+
+    // Small delay ensures smooth initial mount animation
+    const timer = setTimeout(() => {
+      animationFrameId = requestAnimationFrame(step);
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
   }, [value]);
 
   return (
