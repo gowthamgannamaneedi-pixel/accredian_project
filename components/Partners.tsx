@@ -7,19 +7,28 @@ import { motion } from 'framer-motion';
 // Clearbit Logo API — industry-standard, highly reliable logo CDN
 // Falls back to branded text if image fails to load
 const COMPANIES: { name: string; domain: string; textColor: string; textStyle?: string }[] = [
-  { name: 'Google',     domain: 'google.com',     textColor: '#4285F4' },
-  { name: 'Microsoft',  domain: 'microsoft.com',  textColor: '#00A4EF' },
-  { name: 'Amazon',     domain: 'amazon.com',      textColor: '#FF9900' },
-  { name: 'Meta',       domain: 'meta.com',        textColor: '#0668E1' },
-  { name: 'IBM',        domain: 'ibm.com',         textColor: '#1F70C1' },
-  { name: 'Accenture',  domain: 'accenture.com',   textColor: '#A100FF' },
-  { name: 'TCS',        domain: 'tcs.com',         textColor: '#003087' },
-  { name: 'Wipro',      domain: 'wipro.com',       textColor: '#341571' },
-  { name: 'Infosys',    domain: 'infosys.com',     textColor: '#007CC3' },
-  { name: 'Oracle',     domain: 'oracle.com',      textColor: '#F80000' },
-  { name: 'Deloitte',   domain: 'deloitte.com',    textColor: '#86BC25', textStyle: 'font-bold text-slate-800 text-sm' },
-  { name: 'Samsung',    domain: 'samsung.com',     textColor: '#1428A0' },
+  { name: 'Google',       domain: 'google.com',       textColor: '#4285F4' },
+  { name: 'Microsoft',    domain: 'microsoft.com',    textColor: '#00A4EF' },
+  { name: 'Amazon',       domain: 'amazon.com',       textColor: '#FF9900' },
+  { name: 'Meta',         domain: 'meta.com',         textColor: '#0668E1' },
+  { name: 'IBM',          domain: 'ibm.com',          textColor: '#1F70C1' },
+  { name: 'Accenture',    domain: 'accenture.com',    textColor: '#A100FF' },
+  { name: 'TCS',          domain: 'tcs.com',          textColor: '#003087' },
+  { name: 'Wipro',        domain: 'wipro.com',        textColor: '#341571' },
+  { name: 'Infosys',      domain: 'infosys.com',      textColor: '#007CC3' },
+  { name: 'Oracle',       domain: 'oracle.com',       textColor: '#F80000' },
+  { name: 'Deloitte',     domain: 'deloitte.com',     textColor: '#86BC25', textStyle: 'font-bold text-slate-800 text-sm' },
+  { name: 'Samsung',      domain: 'samsung.com',      textColor: '#1428A0' },
+  { name: 'Apple',        domain: 'apple.com',        textColor: '#555555' },
+  { name: 'Netflix',      domain: 'netflix.com',      textColor: '#E50914' },
+  { name: 'Adobe',        domain: 'adobe.com',        textColor: '#FF0000' },
+  { name: 'Cognizant',    domain: 'cognizant.com',    textColor: '#1263A3' },
+  { name: 'Capgemini',    domain: 'capgemini.com',    textColor: '#003B8E' },
+  { name: 'HCL',          domain: 'hcltech.com',      textColor: '#0076C0' },
+  { name: 'JPMorgan',     domain: 'jpmorganchase.com',textColor: '#003087' },
+  { name: 'Goldman Sachs',domain: 'goldmansachs.com', textColor: '#6495C8' },
 ];
+
 
 function CompanyLogo({ name, domain, textColor, textStyle }: {
   name: string;

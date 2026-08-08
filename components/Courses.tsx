@@ -17,13 +17,60 @@ export default function Courses() {
     : COURSES_DATA.filter((course) => course.level === filterLevel);
 
   const handleDownloadBrochure = () => {
+    if (!selectedCourse) return;
     setIsDownloading(true);
+
     setTimeout(() => {
+      // Generate brochure content as a downloadable text file
+      const content = [
+        `ACCREDIAN ENTERPRISE — PROGRAM BROCHURE`,
+        `${'='.repeat(50)}`,
+        ``,
+        `Program: ${selectedCourse.title}`,
+        `Track:    ${selectedCourse.level}`,
+        `Duration: ${selectedCourse.duration}`,
+        `Format:   ${selectedCourse.format}`,
+        ``,
+        `OVERVIEW`,
+        `-`.repeat(40),
+        selectedCourse.description,
+        ``,
+        `KEY HIGHLIGHTS`,
+        `-`.repeat(40),
+        ...(selectedCourse.highlights || []).map((h: string) => `• ${h}`),
+        ``,
+        `TARGET AUDIENCE`,
+        `-`.repeat(40),
+        selectedCourse.targetAudience,
+        ``,
+        `MODULE BREAKDOWN`,
+        `-`.repeat(40),
+        `Module 1: Foundations & Architecture Baseline          (Weeks 1–2)`,
+        `Module 2: Advanced Hands-on Labs & Custom Codebases    (Weeks 3–4)`,
+        `Module 3: Enterprise Integration & Production Deploy   (Weeks 5–6)`,
+        `Module 4: Real-world Capstone & Executive Review       (Weeks 7–8)`,
+        ``,
+        `${'='.repeat(50)}`,
+        `Accredian Enterprise | enterprise@accredian.com`,
+        `https://enterprise.accredian.com`,
+      ].join('\n');
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedCourse.title.replace(/[^a-z0-9]/gi, '_')}_Brochure.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
       setIsDownloading(false);
       setDownloadSuccess(true);
       setTimeout(() => setDownloadSuccess(false), 3000);
-    }, 1200);
+    }, 800);
   };
+
 
   return (
     <section id="programs" className="py-24 bg-[#F8FAFC] relative overflow-hidden border-b border-slate-200">

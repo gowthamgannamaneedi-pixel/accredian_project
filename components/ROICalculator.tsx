@@ -9,10 +9,15 @@ export default function ROICalculator() {
   const [domain, setDomain] = useState<string>('Generative AI & Agentic Systems');
   const [currentLevel, setCurrentLevel] = useState<string>('Intermediate');
 
-  const estimatedUpskillGain = Math.min(65, Math.round(25 + teamSize * 0.4 + (domain.includes('GenAI') ? 15 : 10)));
-  const timeToProductionMultiplier = domain.includes('GenAI') ? '3.8x' : domain.includes('Data Science') ? '3.2x' : '2.5x';
-  const estimatedHoursSavedPerEngineer = Math.round(teamSize * 14.5);
-  const totalAnnualValueAdd = (teamSize * 18500).toLocaleString();
+  const levelMultiplier = currentLevel === 'Foundational' ? 1.0 : currentLevel === 'Intermediate' ? 1.3 : 1.6;
+  const estimatedUpskillGain = Math.min(75, Math.round((25 + teamSize * 0.4 + (domain.includes('GenAI') ? 15 : 10)) * levelMultiplier));
+  const timeToProductionMultiplier = domain.includes('GenAI')
+    ? currentLevel === 'Advanced' ? '5.2x' : currentLevel === 'Intermediate' ? '3.8x' : '2.4x'
+    : domain.includes('Data Science')
+    ? currentLevel === 'Advanced' ? '4.1x' : currentLevel === 'Intermediate' ? '3.2x' : '2.0x'
+    : currentLevel === 'Advanced' ? '3.5x' : currentLevel === 'Intermediate' ? '2.5x' : '1.8x';
+  const estimatedHoursSavedPerEngineer = Math.round(teamSize * 14.5 * (currentLevel === 'Advanced' ? 1.4 : currentLevel === 'Intermediate' ? 1.0 : 0.7));
+  const totalAnnualValueAdd = (teamSize * 18500 * (currentLevel === 'Advanced' ? 1.5 : currentLevel === 'Intermediate' ? 1.0 : 0.65)).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (
     <section id="calculator" className="py-20 bg-white border-b border-slate-200 relative overflow-hidden">
