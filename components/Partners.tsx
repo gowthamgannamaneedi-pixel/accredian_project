@@ -5,7 +5,7 @@ import { Landmark, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 // Import only the icons that actually exist in this version of simple-icons
 import {
-  siGoogle, siMeta, siApple, siSamsung, siNetflix,
+  siMeta, siApple, siSamsung, siNetflix,
   siWipro, siInfosys, siAccenture, siTcs,
 } from 'simple-icons';
 
