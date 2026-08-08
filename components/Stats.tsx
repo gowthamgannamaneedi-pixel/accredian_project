@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useSyncExternalStore } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { STATS_DATA } from '@/lib/data';
 import { Users, Building2, Award, GraduationCap } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useInView, animate } from 'framer-motion';
 
 const iconMap: Record<string, React.ElementType> = {
   Users,
@@ -12,92 +12,50 @@ const iconMap: Record<string, React.ElementType> = {
   GraduationCap,
 };
 
-// React 18/19 canonical SSR hydration check
-const emptySubscribe = () => () => {};
-function useIsClient() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
-}
-
-function StatCounter({
+function AnimatedStat({
   targetNumber,
   suffix,
-  displayValue
+  displayValue,
 }: {
   targetNumber: number;
   suffix: string;
   displayValue: string;
 }) {
-  const isClient = useIsClient();
-  const [count, setCount] = useState<number>(0);
-  const spanRef = useRef<HTMLSpanElement>(null);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-20px' });
+  const [displayNumber, setDisplayNumber] = useState<number>(0);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   useEffect(() => {
-    let startTimestamp: number | null = null;
-    let animId: number;
-    const duration = 1800; // 1.8s smooth count up animation
+    if (isInView && !isAnimating) {
+      setIsAnimating(true);
+      const controls = animate(0, targetNumber, {
+        duration: 1.8,
+        ease: [0.16, 1, 0.3, 1], // Smooth cubic ease-out
+        onUpdate(value) {
+          setDisplayNumber(Math.floor(value));
+        },
+        onComplete() {
+          setDisplayNumber(targetNumber);
+        },
+      });
 
-    const step = (timestamp: number) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-
-      // Smooth ease-out cubic curve
-      const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(easeOutCubic * targetNumber));
-
-      if (progress < 1) {
-        animId = requestAnimationFrame(step);
-      } else {
-        setCount(targetNumber);
-      }
-    };
-
-    // Trigger animation when element enters viewport OR after brief mount delay
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          animId = requestAnimationFrame(step);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (spanRef.current) {
-      observer.observe(spanRef.current);
+      return () => controls.stop();
     }
+  }, [isInView, isAnimating, targetNumber]);
 
-    // Safety fallback: start animation after 100ms if observer is delayed
-    const timer = setTimeout(() => {
-      if (!startTimestamp) {
-        animId = requestAnimationFrame(step);
-      }
-    }, 100);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(timer);
-      if (animId) {
-        cancelAnimationFrame(animId);
-      }
-    };
-  }, [targetNumber]);
-
-  // Format count string output
+  // Output text:
+  // - If isAnimating is true, render count-up number formatted (e.g. 0 -> 10K)
+  // - If isAnimating is false (initial SSR or before scroll), fallback to displayValue so it never shows 0+
   const formattedCount = displayValue.includes('K')
-    ? `${count}K`
-    : count.toLocaleString();
+    ? `${displayNumber}K`
+    : displayNumber.toLocaleString();
 
-  // If SSR (server-rendered HTML), output displayValue directly so static HTML shows 10K+, 200+, 94%, 500+
-  // On client, output animated formattedCount!
-  const renderedText = isClient ? formattedCount : displayValue;
+  const outputText = isAnimating ? formattedCount : displayValue;
 
   return (
-    <span ref={spanRef} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
-      {renderedText}
+    <span ref={ref} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
+      {outputText}
       <span className="text-[#168CFF] font-bold">{suffix}</span>
     </span>
   );
@@ -137,7 +95,7 @@ export default function Stats() {
                   <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-[#0284C7] mb-4 group-hover:scale-105 transition-transform duration-300">
                     <Icon className="w-6 h-6" aria-hidden="true" />
                   </div>
-                  <StatCounter targetNumber={targetNum} displayValue={dispVal} suffix={suff} />
+                  <AnimatedStat targetNumber={targetNum} displayValue={dispVal} suffix={suff} />
                   <h3 className="text-base font-bold text-[#111827] mt-2 mb-1">
                     {stat.label}
                   </h3>
