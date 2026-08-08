@@ -97,7 +97,7 @@ export const ACCREDIAN_EDGE: EdgeFeature[] = [
     title: 'Tailored Enterprise Curricula',
     description: 'Customized modular pathways built specifically around your tech stack, business metrics, and team maturity levels.',
     icon: 'Sliders',
-    tag: 'Besposke Design'
+    tag: 'Bespoke Design'
   },
   {
     id: '3',

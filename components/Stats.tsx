@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { STATS_DATA } from '@/lib/data';
 import { Users, Building2, Award, GraduationCap } from 'lucide-react';
-import { motion, useInView, animate } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const iconMap: Record<string, React.ElementType> = {
   Users,
@@ -12,6 +12,7 @@ const iconMap: Record<string, React.ElementType> = {
   GraduationCap,
 };
 
+// Pure vanilla counter — no framer-motion for counting to avoid 0+ on first frame
 function AnimatedStat({
   targetNumber,
   suffix,
@@ -21,44 +22,62 @@ function AnimatedStat({
   suffix: string;
   displayValue: string;
 }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-20px' });
-  const [displayNumber, setDisplayNumber] = useState<number | null>(null);
-  const hasAnimated = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
+  const didAnimate = useRef(false);
 
   useEffect(() => {
-    if (isInView && !hasAnimated.current) {
-      hasAnimated.current = true;
-      const controls = animate(0, targetNumber, {
-        duration: 1.8,
-        ease: [0.16, 1, 0.3, 1], // Smooth cubic ease-out
-        onUpdate(value) {
-          setDisplayNumber(Math.floor(value));
-        },
-        onComplete() {
-          setDisplayNumber(targetNumber);
-        },
-      });
+    const el = containerRef.current;
+    const span = spanRef.current;
+    if (!el || !span) return;
 
-      return () => controls.stop();
+    function formatValue(n: number): string {
+      if (displayValue.includes('K')) return `${n}K`;
+      return n.toLocaleString();
     }
-  }, [isInView, targetNumber]);
 
-  // Output text:
-  // - If displayNumber is active, render count-up number formatted (e.g. 0 -> 10K)
-  // - If displayNumber is null (initial SSR or before scroll), fallback to displayValue so it never shows 0+
-  const outputText =
-    displayNumber !== null
-      ? displayValue.includes('K')
-        ? `${displayNumber}K`
-        : displayNumber.toLocaleString()
-      : displayValue;
+    // Set final value immediately so static/SSR render always shows correct value
+    span.textContent = formatValue(targetNumber);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !didAnimate.current) {
+          didAnimate.current = true;
+          observer.disconnect();
+
+          const duration = 1800; // ms
+          const startTime = performance.now();
+
+          function tick(now: number) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Cubic ease-out
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * targetNumber);
+            if (span) span.textContent = formatValue(current);
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [targetNumber, displayValue]);
 
   return (
-    <span ref={ref} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
-      {outputText}
-      <span className="text-[#168CFF] font-bold">{suffix}</span>
-    </span>
+    <div ref={containerRef} className="inline-flex items-baseline">
+      <span
+        ref={spanRef}
+        className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight"
+      >
+        {displayValue}
+      </span>
+      <span className="text-[#168CFF] font-bold text-4xl sm:text-5xl">{suffix}</span>
+    </div>
   );
 }
 
