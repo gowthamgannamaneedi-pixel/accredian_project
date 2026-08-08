@@ -60,22 +60,40 @@ function CompanyLogo({ name }: { name: string }) {
         </div>
       );
 
+
     case 'IBM':
       return (
-        <div className="flex items-center">
-          <svg viewBox="0 0 60 24" className="h-5 w-14 shrink-0">
-            {/* I */}
-            <rect x="0" y="2" width="12" height="3" fill="#1F70C1" />
-            <rect x="4" y="7" width="4" height="10" fill="#1F70C1" />
-            <rect x="0" y="19" width="12" height="3" fill="#1F70C1" />
-            {/* B */}
-            <rect x="14" y="2" width="4" height="20" fill="#1F70C1" />
-            <path d="M18 2 h5 a5 5 0 0 1 0 9 h-5 z" fill="#1F70C1" />
-            <path d="M18 11 h5 a5 5 0 0 1 0 11 h-5 z" fill="#1F70C1" />
-            {/* M */}
-            <rect x="30" y="2" width="4" height="20" fill="#1F70C1" />
-            <rect x="52" y="2" width="4" height="20" fill="#1F70C1" />
-            <polygon points="34,2 43,14 52,2" fill="#1F70C1" />
+        <div className="flex items-center gap-1.5">
+          <svg viewBox="0 0 52 20" className="h-5 w-13 shrink-0" aria-label="IBM logo">
+            {/* IBM official 8-stripe wordmark — I */}
+            {[0,2.5,5,7.5,10,12.5,15,17.5].map((y,i)=>(
+              <rect key={`i${i}`} x="0" y={y} width="8" height="1.8" fill="#1F70C1"/>
+            ))}
+            {/* B left bar */}
+            {[0,2.5,5,7.5,10,12.5,15,17.5].map((y,i)=>(
+              <rect key={`bl${i}`} x="12" y={y} width="3.5" height="1.8" fill="#1F70C1"/>
+            ))}
+            {/* B top bump */}
+            <rect x="15.5" y="0"   width="3" height="1.8" fill="#1F70C1"/>
+            <rect x="15.5" y="2.5" width="5" height="1.8" fill="#1F70C1"/>
+            <rect x="15.5" y="7.5" width="3" height="1.8" fill="#1F70C1"/>
+            <rect x="15.5" y="10"  width="5" height="1.8" fill="#1F70C1"/>
+            <rect x="15.5" y="15"  width="3" height="1.8" fill="#1F70C1"/>
+            <rect x="15.5" y="17.5" width="3" height="1.8" fill="#1F70C1"/>
+            {/* M left bar */}
+            {[0,2.5,5,7.5,10,12.5,15,17.5].map((y,i)=>(
+              <rect key={`ml${i}`} x="26" y={y} width="3.5" height="1.8" fill="#1F70C1"/>
+            ))}
+            {/* M right bar */}
+            {[0,2.5,5,7.5,10,12.5,15,17.5].map((y,i)=>(
+              <rect key={`mr${i}`} x="48" y={y} width="3.5" height="1.8" fill="#1F70C1"/>
+            ))}
+            {/* M diagonals */}
+            <rect x="29.5" y="0"   width="4" height="1.8" fill="#1F70C1"/>
+            <rect x="33.5" y="2.5" width="4" height="1.8" fill="#1F70C1"/>
+            <rect x="37.5" y="5"   width="4" height="1.8" fill="#1F70C1"/>
+            <rect x="40.5" y="2.5" width="4" height="1.8" fill="#1F70C1"/>
+            <rect x="44"   y="0"   width="4" height="1.8" fill="#1F70C1"/>
           </svg>
         </div>
       );
