@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { NAV_LINKS } from '@/lib/data';
-import { Menu, X, ArrowRight, Shield } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,21 +33,18 @@ export default function Navbar() {
         <div className="flex items-center justify-between gap-4">
           
           {/* Brand Logo */}
-          <Link href="#" className="flex items-center gap-2.5 group shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-[#168CFF] flex items-center justify-center text-white shadow-md shadow-[#168CFF]/20 group-hover:scale-105 transition-transform duration-300">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-extrabold tracking-tight text-[#111827] flex items-center gap-1.5">
-                accredian{' '}
-                <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-sky-50 text-[#0284C7] border border-sky-200">
-                  ENTERPRISE
-                </span>
+          <Link href="#" className="flex items-center gap-3 group shrink-0">
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-extrabold tracking-tight text-[#168CFF] group-hover:text-[#0284C7] transition-colors duration-200" style={{ letterSpacing: '-0.02em' }}>
+                accredian
               </span>
-              <span className="text-[9px] text-[#4B5563] uppercase tracking-widest font-semibold">
-                Corporate Upskilling
+              <span className="text-[9.5px] text-[#6B7280] font-medium tracking-wide" style={{ letterSpacing: '0.02em' }}>
+                credentials that matter
               </span>
             </div>
+            <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-sky-50 text-[#0284C7] border border-sky-200 self-center">
+              ENTERPRISE
+            </span>
           </Link>
 
           {/* Desktop Links */}
