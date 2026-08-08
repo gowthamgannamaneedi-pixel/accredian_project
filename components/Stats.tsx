@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useSyncExternalStore } from 'react';
 import { STATS_DATA } from '@/lib/data';
 import { Users, Building2, Award, GraduationCap } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -12,6 +12,16 @@ const iconMap: Record<string, React.ElementType> = {
   GraduationCap,
 };
 
+// React 18/19 canonical SSR hydration check
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 function StatCounter({
   targetNumber,
   suffix,
@@ -21,12 +31,11 @@ function StatCounter({
   suffix: string;
   displayValue: string;
 }) {
+  const isClient = useIsClient();
   const [count, setCount] = useState<number>(0);
-  const [isClient, setIsClient] = useState<boolean>(false);
   const spanRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    setIsClient(true);
     let startTimestamp: number | null = null;
     let animId: number;
     const duration = 1800; // 1.8s smooth count up animation
