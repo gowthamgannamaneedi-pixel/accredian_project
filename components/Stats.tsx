@@ -12,14 +12,50 @@ const iconMap: Record<string, React.ElementType> = {
   GraduationCap,
 };
 
-function Counter({ value, suffix }: { value: number; suffix: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
+function Counter({
+  targetNumber,
+  suffix,
+  displayValue
+}: {
+  targetNumber: number;
+  suffix: string;
+  displayValue: string;
+}) {
+  const [count, setCount] = useState<number>(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const elementRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setHasStarted(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    // Safety fallback ensures animation runs reliably even on static hydration
+    const fallbackTimer = setTimeout(() => {
+      setHasStarted(true);
+    }, 150);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+
     let startTimestamp: number | null = null;
     let animationFrameId: number;
-    const duration = 2000; // 2 seconds smooth animation
+    const duration = 1800; // 1.8 seconds smooth count up animation
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -27,31 +63,32 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
 
       // Smooth ease-out cubic curve
       const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(easeOutCubic * value));
+      setCount(Math.floor(easeOutCubic * targetNumber));
 
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(step);
       } else {
-        setCount(value);
+        setCount(targetNumber);
       }
     };
 
-    // Small delay ensures smooth initial mount animation
-    const timer = setTimeout(() => {
-      animationFrameId = requestAnimationFrame(step);
-    }, 150);
+    animationFrameId = requestAnimationFrame(step);
 
     return () => {
-      clearTimeout(timer);
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [value]);
+  }, [hasStarted, targetNumber]);
+
+  // Format count string output
+  const formattedCount = displayValue.includes('K')
+    ? `${count}K`
+    : count.toLocaleString();
 
   return (
-    <span ref={ref} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
-      {count.toLocaleString()}
+    <span ref={elementRef} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
+      {hasStarted ? formattedCount : '0'}
       <span className="text-[#168CFF] font-bold">{suffix}</span>
     </span>
   );
@@ -74,6 +111,9 @@ export default function Stats() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {STATS_DATA.map((stat, idx) => {
             const Icon = iconMap[stat.iconName] || Users;
+            const targetNum = stat.targetNumber || stat.value;
+            const dispVal = stat.displayValue || stat.value.toString();
+
             return (
               <motion.div
                 key={stat.id}
@@ -87,7 +127,7 @@ export default function Stats() {
                   <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-[#0284C7] mb-4 group-hover:scale-105 transition-transform duration-300">
                     <Icon className="w-6 h-6" aria-hidden="true" />
                   </div>
-                  <Counter value={stat.value} suffix={stat.suffix} />
+                  <Counter targetNumber={targetNum} displayValue={dispVal} suffix={stat.suffix} />
                   <h3 className="text-base font-bold text-[#111827] mt-2 mb-1">
                     {stat.label}
                   </h3>

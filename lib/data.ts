@@ -21,7 +21,7 @@ export const NAV_LINKS = [
 ];
 
 export const HERO_STATS = [
-  { label: 'Enterprise Learners', value: '50,000+' },
+  { label: 'Enterprise Learners', value: '10K+' },
   { label: 'Global Client Partners', value: '200+' },
   { label: 'Avg Salary Impact / Upskill', value: '40%' },
   { label: 'Industry Expert Mentors', value: '500+' },
@@ -31,7 +31,9 @@ export const STATS_DATA: StatItem[] = [
   {
     id: '1',
     label: 'Active Enterprise Learners',
-    value: 50000,
+    value: 10,
+    targetNumber: 10,
+    displayValue: '10K',
     suffix: '+',
     description: 'Engineers, data scientists & executive leaders trained globally',
     iconName: 'Users'
@@ -40,6 +42,8 @@ export const STATS_DATA: StatItem[] = [
     id: '2',
     label: 'Corporate Partners',
     value: 200,
+    targetNumber: 200,
+    displayValue: '200',
     suffix: '+',
     description: 'Fortune 500 tech & enterprise organizations trusting Accredian',
     iconName: 'Building2'
@@ -48,6 +52,8 @@ export const STATS_DATA: StatItem[] = [
     id: '3',
     label: 'Program Completion Rate',
     value: 94,
+    targetNumber: 94,
+    displayValue: '94',
     suffix: '%',
     description: 'Industry-leading engagement through concept-to-context learning',
     iconName: 'Award'
@@ -56,6 +62,8 @@ export const STATS_DATA: StatItem[] = [
     id: '4',
     label: 'Industry Expert Mentors',
     value: 500,
+    targetNumber: 500,
+    displayValue: '500',
     suffix: '+',
     description: 'Senior practitioners from top tech companies leading live cohorts',
     iconName: 'GraduationCap'

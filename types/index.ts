@@ -46,6 +46,8 @@ export interface StatItem {
   id: string;
   label: string;
   value: number;
+  targetNumber?: number;
+  displayValue?: string;
   suffix: string;
   description: string;
   iconName: string;
