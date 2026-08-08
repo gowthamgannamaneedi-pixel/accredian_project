@@ -1,43 +1,55 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 export default function ParticlesBackground() {
-  const particles = Array.from({ length: 15 });
+  // Deterministically pre-calculate particle positions to ensure React purity
+  const particleData = useMemo(() => {
+    return Array.from({ length: 15 }, (_, i) => {
+      // Pseudo-random deterministic values derived from index
+      const seed = (i * 9301 + 49297) % 233280;
+      const rnd1 = seed / 233280;
+      const rnd2 = ((i * 1259 + 21401) % 32768) / 32768;
+      const rnd3 = ((i * 3813 + 5119) % 65536) / 65536;
+
+      return {
+        id: i,
+        size: rnd1 * 4 + 2,
+        initialX: rnd2 * 100,
+        initialY: rnd3 * 100,
+        duration: rnd1 * 10 + 10,
+        xShift: (rnd2 - 0.5) * 40,
+        delay: rnd3 * 5,
+      };
+    });
+  }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {particles.map((_, i) => {
-        const size = Math.random() * 4 + 2; // 2px to 6px
-        const initialX = Math.random() * 100;
-        const initialY = Math.random() * 100;
-        const duration = Math.random() * 10 + 10; // 10s to 20s
-
-        return (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-cyan-400/30 blur-[1px]"
-            style={{
-              width: `${size}px`,
-              height: `${size}px`,
-              left: `${initialX}%`,
-              top: `${initialY}%`,
-            }}
-            animate={{
-              y: ['0%', '-150%'],
-              x: ['0%', `${(Math.random() - 0.5) * 40}%`],
-              opacity: [0, 0.7, 0],
-            }}
-            transition={{
-              duration,
-              repeat: Infinity,
-              ease: 'linear',
-              delay: Math.random() * 5,
-            }}
-          />
-        );
-      })}
+      {particleData.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full bg-sky-400/20 blur-[1px]"
+          style={{
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            left: `${p.initialX}%`,
+            top: `${p.initialY}%`,
+          }}
+          animate={{
+            y: ['0%', '-150%'],
+            x: ['0%', `${p.xShift}%`],
+            opacity: [0, 0.7, 0],
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            ease: 'linear',
+            delay: p.delay,
+          }}
+        />
+      ))}
     </div>
   );
 }

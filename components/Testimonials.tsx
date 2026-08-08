@@ -83,6 +83,7 @@ export default function Testimonials() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-slate-200">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full bg-[#168CFF] p-0.5 shadow-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={currentTestimonial.image}
                       alt={currentTestimonial.name}

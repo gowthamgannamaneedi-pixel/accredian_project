@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Bot, User, Sparkles, ChevronRight, ShieldCheck, RefreshCw, ArrowUpRight } from 'lucide-react';
+import { X, Send, Bot, Sparkles, ChevronRight, RefreshCw, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -15,7 +15,7 @@ interface Message {
 
 const INITIAL_MESSAGES: Message[] = [
   {
-    id: '1',
+    id: 'msg-init-1',
     sender: 'bot',
     text: "Hello! 👋 I'm Accredian's AI Enterprise Advisor. How can I assist with your team's upskilling goals today?",
     timestamp: 'Just now',
@@ -34,6 +34,7 @@ export default function Chatbot() {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageCounter = useRef(100);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -83,11 +84,14 @@ export default function Chatbot() {
     const text = textToSend || inputValue;
     if (!text.trim()) return;
 
+    messageCounter.current += 1;
+    const userMsgId = `msg-usr-${messageCounter.current}`;
+
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: userMsgId,
       sender: 'user',
       text: text.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: 'Just now',
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -95,12 +99,14 @@ export default function Chatbot() {
     setIsTyping(true);
 
     setTimeout(() => {
+      messageCounter.current += 1;
+      const botMsgId = `msg-bot-${messageCounter.current}`;
       const { replyText, actionLink, options } = generateBotReply(text);
       const botMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: botMsgId,
         sender: 'bot',
         text: replyText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: 'Just now',
         actionLink,
         options,
       };
