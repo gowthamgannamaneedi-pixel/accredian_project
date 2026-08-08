@@ -33,10 +33,10 @@ Build a responsive, modern enterprise landing page inspired by Accredian Enterpr
 - **Sticky Navbar**: Jump anchors, mobile hamburger drawer, and consultation CTA
 - **Hero Section**: Value statement, trust indicators, and an animated L&D dashboard mockup card
 - **Enterprise Impact Stats**: Scroll-triggered animated counters:
-  - 10K+ Active Enterprise Learners
+  - 50K+ Active Enterprise Learners
   - 200+ Corporate Partners
   - 94% Program Completion Rate
-  - 500+ Industry Expert Mentors
+  - 1000+ Industry Expert Mentors
 - **Partners Marquee**: Infinite animated scrolling marquee featuring brand logos (Google, Microsoft, Amazon, Meta, IBM, Accenture, TCS, Wipro, Infosys, Oracle, Deloitte, Samsung) and academic partners (IIT Guwahati, XLRI)
 - **Accredian Edge (6 Pillars)**: Interactive feature cards for core differentiators
 - **Domain Expertise Navigator**: Tabbed switcher across AI & GenAI, Data Science, Product Management, Executive Leadership, and Cloud & DevSecOps

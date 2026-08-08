@@ -21,19 +21,19 @@ export const NAV_LINKS = [
 ];
 
 export const HERO_STATS = [
-  { label: 'Enterprise Learners', value: '10K+' },
+  { label: 'Enterprise Learners', value: '50K+' },
   { label: 'Global Client Partners', value: '200+' },
   { label: 'Avg Salary Impact / Upskill', value: '40%' },
-  { label: 'Industry Expert Mentors', value: '500+' },
+  { label: 'Industry Expert Mentors', value: '1000+' },
 ];
 
 export const STATS_DATA: StatItem[] = [
   {
     id: '1',
     label: 'Active Enterprise Learners',
-    value: 10,
-    targetNumber: 10,
-    displayValue: '10K',
+    value: 50,
+    targetNumber: 50,
+    displayValue: '50K',
     suffix: '+',
     description: 'Engineers, data scientists & executive leaders trained globally',
     iconName: 'Users'
@@ -61,9 +61,9 @@ export const STATS_DATA: StatItem[] = [
   {
     id: '4',
     label: 'Industry Expert Mentors',
-    value: 500,
-    targetNumber: 500,
-    displayValue: '500',
+    value: 1000,
+    targetNumber: 1000,
+    displayValue: '1000',
     suffix: '+',
     description: 'Senior practitioners from top tech companies leading live cohorts',
     iconName: 'GraduationCap'
