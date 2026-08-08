@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const viewport: Viewport = {
-  themeColor: '#0b192c',
+  themeColor: '#ffffff',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -102,7 +102,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
         />
       </head>
-      <body className="antialiased bg-slate-950 text-slate-100 selection:bg-cyan-500 selection:text-slate-950">
+      <body className="antialiased bg-white text-slate-900 selection:bg-[#168CFF] selection:text-white">
         {children}
       </body>
     </html>

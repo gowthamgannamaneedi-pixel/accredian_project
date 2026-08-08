@@ -15,28 +15,40 @@ const iconMap: Record<string, React.ElementType> = {
 function Counter({ value, suffix }: { value: number; suffix: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 2000;
-    const stepTime = 30;
-    const steps = duration / stepTime;
-    const increment = value / steps;
+    // If already animated or in view, run count up animation
+    if (!hasAnimated.current && (isInView || typeof window !== 'undefined')) {
+      hasAnimated.current = true;
+      let start = 0;
+      const duration = 1800;
+      const stepTime = 30;
+      const steps = duration / stepTime;
+      const increment = value / steps;
 
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= value) {
-        setCount(value);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, stepTime);
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= value) {
+          setCount(value);
+          clearInterval(timer);
+        } else {
+          setCount(Math.floor(start));
+        }
+      }, stepTime);
 
-    return () => clearInterval(timer);
+      return () => clearInterval(timer);
+    }
   }, [isInView, value]);
+
+  // Fallback safety to ensure non-zero display
+  useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      setCount(value);
+    }, 2000);
+    return () => clearTimeout(safetyTimer);
+  }, [value]);
 
   return (
     <span ref={ref} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
@@ -48,16 +60,16 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
 
 export default function Stats() {
   return (
-    <section className="py-16 bg-[#F8FAFC] border-y border-slate-200 relative overflow-hidden">
+    <section id="stats" className="py-16 bg-[#F8FAFC] border-y border-slate-200 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs uppercase tracking-widest text-[#0284C7] font-bold block mb-2">
             Proven Enterprise Impact
           </span>
-          <p className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
             Transforming Organizational Capabilities At Scale
-          </p>
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -74,7 +86,7 @@ export default function Stats() {
               >
                 <div>
                   <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-[#0284C7] mb-4 group-hover:scale-105 transition-transform duration-300">
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <Counter value={stat.value} suffix={stat.suffix} />
                   <h3 className="text-base font-bold text-[#111827] mt-2 mb-1">
