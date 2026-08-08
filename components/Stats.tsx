@@ -23,12 +23,12 @@ function AnimatedStat({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-20px' });
-  const [displayNumber, setDisplayNumber] = useState<number>(0);
-  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const [displayNumber, setDisplayNumber] = useState<number | null>(null);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (isInView && !isAnimating) {
-      setIsAnimating(true);
+    if (isInView && !hasAnimated.current) {
+      hasAnimated.current = true;
       const controls = animate(0, targetNumber, {
         duration: 1.8,
         ease: [0.16, 1, 0.3, 1], // Smooth cubic ease-out
@@ -42,16 +42,17 @@ function AnimatedStat({
 
       return () => controls.stop();
     }
-  }, [isInView, isAnimating, targetNumber]);
+  }, [isInView, targetNumber]);
 
   // Output text:
-  // - If isAnimating is true, render count-up number formatted (e.g. 0 -> 10K)
-  // - If isAnimating is false (initial SSR or before scroll), fallback to displayValue so it never shows 0+
-  const formattedCount = displayValue.includes('K')
-    ? `${displayNumber}K`
-    : displayNumber.toLocaleString();
-
-  const outputText = isAnimating ? formattedCount : displayValue;
+  // - If displayNumber is active, render count-up number formatted (e.g. 0 -> 10K)
+  // - If displayNumber is null (initial SSR or before scroll), fallback to displayValue so it never shows 0+
+  const outputText =
+    displayNumber !== null
+      ? displayValue.includes('K')
+        ? `${displayNumber}K`
+        : displayNumber.toLocaleString()
+      : displayValue;
 
   return (
     <span ref={ref} className="font-extrabold text-4xl sm:text-5xl text-[#111827] tracking-tight">
