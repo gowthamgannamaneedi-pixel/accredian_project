@@ -1,135 +1,82 @@
 'use client';
 
 import React from 'react';
-import { PARTNERS_DATA } from '@/lib/data';
+
 import { Landmark, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Authentic Vector SVG Brand Logos
-function CorporateBrandLogo({ name }: { name: string }) {
-  switch (name) {
-    case 'Google':
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.25 21.32 7.33 24 12 24z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.99 0 12s.46 3.84 1.26 5.42l4.02-3.15z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.25 2.68 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-            />
-          </svg>
-          <span className="font-bold text-slate-800 text-sm tracking-tight">Google</span>
-        </div>
-      );
+// Official brand logos using img tags with CDN-hosted SVG logos
+const CORPORATE_LOGOS: { name: string; logoUrl: string; width?: number }[] = [
+  {
+    name: 'Google',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+    width: 80,
+  },
+  {
+    name: 'Microsoft',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg',
+    width: 110,
+  },
+  {
+    name: 'Amazon',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg',
+    width: 90,
+  },
+  {
+    name: 'Meta',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg',
+    width: 90,
+  },
+  {
+    name: 'IBM',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg',
+    width: 70,
+  },
+  {
+    name: 'Accenture',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg',
+    width: 110,
+  },
+  {
+    name: 'TCS',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Tata_Consultancy_Services_Logo.svg',
+    width: 60,
+  },
+  {
+    name: 'Wipro',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Wipro_Primary_Logo_Color_RGB.svg',
+    width: 80,
+  },
+  {
+    name: 'Infosys',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg',
+    width: 90,
+  },
+  {
+    name: 'Oracle',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg',
+    width: 80,
+  },
+  {
+    name: 'Deloitte',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Deloitte_Logo.png',
+    width: 90,
+  },
+  {
+    name: 'Samsung',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg',
+    width: 90,
+  },
+];
 
-    case 'Microsoft':
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-            <path fill="#F25022" d="M1 1h10v10H1z" />
-            <path fill="#7FBA00" d="M13 1h10v10H1z" />
-            <path fill="#00A4EF" d="M1 13h10v10H1z" />
-            <path fill="#FFB900" d="M13 13h10v10H13z" />
-          </svg>
-          <span className="font-semibold text-slate-700 text-sm tracking-tight">Microsoft</span>
-        </div>
-      );
-
-    case 'Amazon':
-      return (
-        <div className="flex flex-col items-start justify-center shrink-0 relative py-0.5 px-1">
-          <span className="font-extrabold text-slate-900 text-sm tracking-tighter leading-none">amazon</span>
-          <svg className="w-8 h-2.5 text-[#FF9900] mt-0.5" viewBox="0 0 40 12" fill="currentColor">
-            <path d="M1 4c8 6 23 6 34 0l-3 4c-8 3-21 3-28 0z" />
-            <path d="M33 2l6 4-4 4z" />
-          </svg>
-        </div>
-      );
-
-    case 'Meta':
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <svg className="w-6 h-4 shrink-0 text-[#0668E1]" viewBox="0 0 24 16" fill="currentColor">
-            <path d="M16.4 0C14.2 0 12.4 1.3 11.4 3 10.4 1.3 8.6 0 6.4 0 2.9 0 0 3.6 0 8s2.9 8 6.4 8c2.2 0 4-1.3 5-3 1 1.7 2.8 3 5 3 3.5 0 6.4-3.6 6.4-8S19.9 0 16.4 0zm-10 12.8C4.1 12.8 2.2 10.6 2.2 8s1.9-4.8 4.2-4.8c1.9 0 3.5 1.5 4 3.5.1.4.1.8.1 1.3 0 .4 0 .8-.1 1.3-.5 2-2.1 3.5-4.2 3.5zm10 0c-2.1 0-3.7-1.5-4.2-3.5 0-.4-.1-.8-.1-1.3 0-.4 0-.8.1-1.3.5-2 2.1-3.5 4.2-3.5 2.3 0 4.2 2.2 4.2 4.8s-1.9 4.8-4.2 4.8z" />
-          </svg>
-          <span className="font-extrabold text-[#0668E1] text-sm tracking-tight">Meta</span>
-        </div>
-      );
-
-    case 'ADP':
-      return (
-        <div className="flex items-center shrink-0">
-          <span className="font-black text-red-600 text-lg tracking-tighter">ADP</span>
-        </div>
-      );
-
-    case 'Bayer':
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-5 h-5 rounded-full bg-[#0091DF] text-white font-black text-[8px] flex items-center justify-center shadow-2xs">
-            BAYER
-          </div>
-          <span className="font-bold text-[#0091DF] text-sm tracking-tight">Bayer</span>
-        </div>
-      );
-
-    case 'TCS':
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-6 h-6 rounded bg-[#0A2540] flex items-center justify-center text-white font-extrabold text-[10px] tracking-tight shrink-0 shadow-2xs">
-            tcs
-          </div>
-          <div className="flex flex-col items-start leading-none">
-            <span className="font-extrabold text-[#0A2540] text-sm tracking-tight">tcs</span>
-            <span className="text-[7px] font-bold text-slate-500 tracking-wider uppercase">TATA CONSULTANCY SERVICES</span>
-          </div>
-        </div>
-      );
-
-    case 'Accenture':
-      return (
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="font-black text-purple-600 text-base leading-none">&gt;</span>
-          <span className="font-bold text-slate-800 text-sm tracking-tight">accenture</span>
-        </div>
-      );
-
-    case 'Reliance Industries':
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-5 h-5 rounded bg-gradient-to-tr from-amber-700 via-amber-600 to-yellow-500 text-white font-black text-[10px] flex items-center justify-center shadow-2xs border border-amber-800">
-            R
-          </div>
-          <div className="flex flex-col items-start leading-none">
-            <span className="font-black text-amber-800 text-xs tracking-tight">Reliance</span>
-            <span className="text-[8px] font-bold text-amber-600 tracking-widest uppercase">Industries Limited</span>
-          </div>
-        </div>
-      );
-
-    default:
-      return (
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="font-bold text-slate-800 text-sm">{name}</span>
-        </div>
-      );
-  }
-}
+const academicPartners = [
+  { name: 'E&ICT Academy, IIT Guwahati', logoText: 'E&ICT Academy, IIT Guwahati' },
+  { name: 'XLRI Executive Education', logoText: 'XLRI Executive Education' },
+];
 
 export default function Partners() {
-  const corporatePartners = PARTNERS_DATA.filter((p) => p.type === 'corporate');
-  const academicPartners = PARTNERS_DATA.filter((p) => p.type === 'academic');
+  // Duplicate for seamless infinite marquee
+  const marqueeItems = [...CORPORATE_LOGOS, ...CORPORATE_LOGOS];
 
   return (
     <section id="partners" className="py-20 bg-white relative overflow-hidden border-b border-slate-200">
@@ -153,7 +100,7 @@ export default function Partners() {
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-4xl font-extrabold text-[#111827] tracking-tight"
           >
-            Partnering with Industry Titans & Academic Giants
+            Partnering with Industry Titans &amp; Academic Giants
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
@@ -195,18 +142,24 @@ export default function Partners() {
           ))}
         </div>
 
-        {/* Corporate Partners Logo Marquee */}
+        {/* Corporate Partners Logo Marquee — real logos */}
         <div className="relative overflow-hidden py-5 border-y border-slate-200 bg-[#F8FAFC] rounded-2xl">
           <div className="flex animate-marquee gap-8 items-center">
-            {[...corporatePartners, ...corporatePartners].map((partner, index) => (
+            {marqueeItems.map((partner, index) => (
               <div
                 key={`${partner.name}-${index}`}
-                className="flex items-center gap-3 px-6 py-3.5 rounded-xl bg-white border border-slate-200 text-[#111827] font-bold text-sm shrink-0 hover:border-[#168CFF] transition-colors shadow-2xs group"
+                className="flex items-center justify-center px-8 py-4 rounded-xl bg-white border border-slate-200 shrink-0 hover:border-[#168CFF]/50 hover:shadow-md transition-all duration-300"
+                style={{ minWidth: '140px', height: '68px' }}
               >
-                <CorporateBrandLogo name={partner.name} />
-                <span className="text-[10px] font-medium text-[#6B7280] ml-1 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                  {partner.industry}
-                </span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={partner.logoUrl}
+                  alt={`${partner.name} logo`}
+                  width={partner.width || 90}
+                  height={32}
+                  className="object-contain"
+                  style={{ maxHeight: '32px', width: 'auto' }}
+                />
               </div>
             ))}
           </div>
